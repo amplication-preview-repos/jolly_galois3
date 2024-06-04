@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
-import { ModelModule } from "./model/model.module";
 import { BrandModule } from "./brand/brand.module";
-import { CarSpecificationModule } from "./carSpecification/carSpecification.module";
+import { ModelModule } from "./model/model.module";
 import { VariantModule } from "./variant/variant.module";
+import { CarSpecificationModule } from "./carSpecification/carSpecification.module";
 import { CarFeatureModule } from "./carFeature/carFeature.module";
 import { CarReviewModule } from "./carReview/carReview.module";
 import { HealthModule } from "./health/health.module";
@@ -17,10 +17,10 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 @Module({
   controllers: [],
   imports: [
-    ModelModule,
     BrandModule,
-    CarSpecificationModule,
+    ModelModule,
     VariantModule,
+    CarSpecificationModule,
     CarFeatureModule,
     CarReviewModule,
     HealthModule,

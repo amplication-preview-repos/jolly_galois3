@@ -17,7 +17,10 @@ import { CarReview } from "./CarReview";
 import { CarReviewCountArgs } from "./CarReviewCountArgs";
 import { CarReviewFindManyArgs } from "./CarReviewFindManyArgs";
 import { CarReviewFindUniqueArgs } from "./CarReviewFindUniqueArgs";
+import { CreateCarReviewArgs } from "./CreateCarReviewArgs";
+import { UpdateCarReviewArgs } from "./UpdateCarReviewArgs";
 import { DeleteCarReviewArgs } from "./DeleteCarReviewArgs";
+import { Variant } from "../../variant/base/Variant";
 import { CarReviewService } from "../carReview.service";
 @graphql.Resolver(() => CarReview)
 export class CarReviewResolverBase {
@@ -51,6 +54,51 @@ export class CarReviewResolverBase {
   }
 
   @graphql.Mutation(() => CarReview)
+  async createCarReview(
+    @graphql.Args() args: CreateCarReviewArgs
+  ): Promise<CarReview> {
+    return await this.service.createCarReview({
+      ...args,
+      data: {
+        ...args.data,
+
+        variant: args.data.variant
+          ? {
+              connect: args.data.variant,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @graphql.Mutation(() => CarReview)
+  async updateCarReview(
+    @graphql.Args() args: UpdateCarReviewArgs
+  ): Promise<CarReview | null> {
+    try {
+      return await this.service.updateCarReview({
+        ...args,
+        data: {
+          ...args.data,
+
+          variant: args.data.variant
+            ? {
+                connect: args.data.variant,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => CarReview)
   async deleteCarReview(
     @graphql.Args() args: DeleteCarReviewArgs
   ): Promise<CarReview | null> {
@@ -64,5 +112,20 @@ export class CarReviewResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => Variant, {
+    nullable: true,
+    name: "variant",
+  })
+  async getVariant(
+    @graphql.Parent() parent: CarReview
+  ): Promise<Variant | null> {
+    const result = await this.service.getVariant(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

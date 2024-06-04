@@ -5,22 +5,22 @@ import { theme } from "./theme/theme";
 import Login from "./Login";
 import "./App.scss";
 import Dashboard from "./pages/Dashboard";
-import { ModelList } from "./model/ModelList";
-import { ModelCreate } from "./model/ModelCreate";
-import { ModelEdit } from "./model/ModelEdit";
-import { ModelShow } from "./model/ModelShow";
 import { BrandList } from "./brand/BrandList";
 import { BrandCreate } from "./brand/BrandCreate";
 import { BrandEdit } from "./brand/BrandEdit";
 import { BrandShow } from "./brand/BrandShow";
-import { CarSpecificationList } from "./carSpecification/CarSpecificationList";
-import { CarSpecificationCreate } from "./carSpecification/CarSpecificationCreate";
-import { CarSpecificationEdit } from "./carSpecification/CarSpecificationEdit";
-import { CarSpecificationShow } from "./carSpecification/CarSpecificationShow";
+import { ModelList } from "./model/ModelList";
+import { ModelCreate } from "./model/ModelCreate";
+import { ModelEdit } from "./model/ModelEdit";
+import { ModelShow } from "./model/ModelShow";
 import { VariantList } from "./variant/VariantList";
 import { VariantCreate } from "./variant/VariantCreate";
 import { VariantEdit } from "./variant/VariantEdit";
 import { VariantShow } from "./variant/VariantShow";
+import { CarSpecificationList } from "./carSpecification/CarSpecificationList";
+import { CarSpecificationCreate } from "./carSpecification/CarSpecificationCreate";
+import { CarSpecificationEdit } from "./carSpecification/CarSpecificationEdit";
+import { CarSpecificationShow } from "./carSpecification/CarSpecificationShow";
 import { CarFeatureList } from "./carFeature/CarFeatureList";
 import { CarFeatureCreate } from "./carFeature/CarFeatureCreate";
 import { CarFeatureEdit } from "./carFeature/CarFeatureEdit";
@@ -56,13 +56,6 @@ const App = (): React.ReactElement => {
         loginPage={Login}
       >
         <Resource
-          name="Model"
-          list={ModelList}
-          edit={ModelEdit}
-          create={ModelCreate}
-          show={ModelShow}
-        />
-        <Resource
           name="Brand"
           list={BrandList}
           edit={BrandEdit}
@@ -70,11 +63,11 @@ const App = (): React.ReactElement => {
           show={BrandShow}
         />
         <Resource
-          name="CarSpecification"
-          list={CarSpecificationList}
-          edit={CarSpecificationEdit}
-          create={CarSpecificationCreate}
-          show={CarSpecificationShow}
+          name="Model"
+          list={ModelList}
+          edit={ModelEdit}
+          create={ModelCreate}
+          show={ModelShow}
         />
         <Resource
           name="Variant"
@@ -82,6 +75,13 @@ const App = (): React.ReactElement => {
           edit={VariantEdit}
           create={VariantCreate}
           show={VariantShow}
+        />
+        <Resource
+          name="CarSpecification"
+          list={CarSpecificationList}
+          edit={CarSpecificationEdit}
+          create={CarSpecificationCreate}
+          show={CarSpecificationShow}
         />
         <Resource
           name="CarFeature"

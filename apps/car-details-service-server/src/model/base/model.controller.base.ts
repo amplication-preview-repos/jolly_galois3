@@ -22,6 +22,9 @@ import { Model } from "./Model";
 import { ModelFindManyArgs } from "./ModelFindManyArgs";
 import { ModelWhereUniqueInput } from "./ModelWhereUniqueInput";
 import { ModelUpdateInput } from "./ModelUpdateInput";
+import { VariantFindManyArgs } from "../../variant/base/VariantFindManyArgs";
+import { Variant } from "../../variant/base/Variant";
+import { VariantWhereUniqueInput } from "../../variant/base/VariantWhereUniqueInput";
 
 export class ModelControllerBase {
   constructor(protected readonly service: ModelService) {}
@@ -29,11 +32,28 @@ export class ModelControllerBase {
   @swagger.ApiCreatedResponse({ type: Model })
   async createModel(@common.Body() data: ModelCreateInput): Promise<Model> {
     return await this.service.createModel({
-      data: data,
+      data: {
+        ...data,
+
+        brand: data.brand
+          ? {
+              connect: data.brand,
+            }
+          : undefined,
+      },
       select: {
+        brand: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
+        image: true,
+        name: true,
         updatedAt: true,
+        year: true,
       },
     });
   }
@@ -46,9 +66,18 @@ export class ModelControllerBase {
     return this.service.models({
       ...args,
       select: {
+        brand: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
+        image: true,
+        name: true,
         updatedAt: true,
+        year: true,
       },
     });
   }
@@ -62,9 +91,18 @@ export class ModelControllerBase {
     const result = await this.service.model({
       where: params,
       select: {
+        brand: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
+        image: true,
+        name: true,
         updatedAt: true,
+        year: true,
       },
     });
     if (result === null) {
@@ -85,11 +123,28 @@ export class ModelControllerBase {
     try {
       return await this.service.updateModel({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          brand: data.brand
+            ? {
+                connect: data.brand,
+              }
+            : undefined,
+        },
         select: {
+          brand: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
           id: true,
+          image: true,
+          name: true,
           updatedAt: true,
+          year: true,
         },
       });
     } catch (error) {
@@ -112,9 +167,18 @@ export class ModelControllerBase {
       return await this.service.deleteModel({
         where: params,
         select: {
+          brand: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
           id: true,
+          image: true,
+          name: true,
           updatedAt: true,
+          year: true,
         },
       });
     } catch (error) {
@@ -125,5 +189,89 @@ export class ModelControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/variants")
+  @ApiNestedQuery(VariantFindManyArgs)
+  async findVariants(
+    @common.Req() request: Request,
+    @common.Param() params: ModelWhereUniqueInput
+  ): Promise<Variant[]> {
+    const query = plainToClass(VariantFindManyArgs, request.query);
+    const results = await this.service.findVariants(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        fuelType: true,
+        id: true,
+
+        model: {
+          select: {
+            id: true,
+          },
+        },
+
+        name: true,
+        price: true,
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/variants")
+  async connectVariants(
+    @common.Param() params: ModelWhereUniqueInput,
+    @common.Body() body: VariantWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      variants: {
+        connect: body,
+      },
+    };
+    await this.service.updateModel({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/variants")
+  async updateVariants(
+    @common.Param() params: ModelWhereUniqueInput,
+    @common.Body() body: VariantWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      variants: {
+        set: body,
+      },
+    };
+    await this.service.updateModel({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/variants")
+  async disconnectVariants(
+    @common.Param() params: ModelWhereUniqueInput,
+    @common.Body() body: VariantWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      variants: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateModel({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

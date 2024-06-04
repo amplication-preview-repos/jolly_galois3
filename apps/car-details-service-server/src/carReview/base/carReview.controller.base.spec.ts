@@ -18,26 +18,38 @@ import { CarReviewService } from "../carReview.service";
 const nonExistingId = "nonExistingId";
 const existingId = "existingId";
 const CREATE_INPUT = {
+  comment: "exampleComment",
   createdAt: new Date(),
   id: "exampleId",
+  rating: 42,
   updatedAt: new Date(),
+  user: "exampleUser",
 };
 const CREATE_RESULT = {
+  comment: "exampleComment",
   createdAt: new Date(),
   id: "exampleId",
+  rating: 42,
   updatedAt: new Date(),
+  user: "exampleUser",
 };
 const FIND_MANY_RESULT = [
   {
+    comment: "exampleComment",
     createdAt: new Date(),
     id: "exampleId",
+    rating: 42,
     updatedAt: new Date(),
+    user: "exampleUser",
   },
 ];
 const FIND_ONE_RESULT = {
+  comment: "exampleComment",
   createdAt: new Date(),
   id: "exampleId",
+  rating: 42,
   updatedAt: new Date(),
+  user: "exampleUser",
 };
 
 const service = {

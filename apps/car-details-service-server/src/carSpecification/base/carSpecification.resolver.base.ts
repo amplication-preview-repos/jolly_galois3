@@ -17,7 +17,10 @@ import { CarSpecification } from "./CarSpecification";
 import { CarSpecificationCountArgs } from "./CarSpecificationCountArgs";
 import { CarSpecificationFindManyArgs } from "./CarSpecificationFindManyArgs";
 import { CarSpecificationFindUniqueArgs } from "./CarSpecificationFindUniqueArgs";
+import { CreateCarSpecificationArgs } from "./CreateCarSpecificationArgs";
+import { UpdateCarSpecificationArgs } from "./UpdateCarSpecificationArgs";
 import { DeleteCarSpecificationArgs } from "./DeleteCarSpecificationArgs";
+import { Variant } from "../../variant/base/Variant";
 import { CarSpecificationService } from "../carSpecification.service";
 @graphql.Resolver(() => CarSpecification)
 export class CarSpecificationResolverBase {
@@ -51,6 +54,51 @@ export class CarSpecificationResolverBase {
   }
 
   @graphql.Mutation(() => CarSpecification)
+  async createCarSpecification(
+    @graphql.Args() args: CreateCarSpecificationArgs
+  ): Promise<CarSpecification> {
+    return await this.service.createCarSpecification({
+      ...args,
+      data: {
+        ...args.data,
+
+        variant: args.data.variant
+          ? {
+              connect: args.data.variant,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @graphql.Mutation(() => CarSpecification)
+  async updateCarSpecification(
+    @graphql.Args() args: UpdateCarSpecificationArgs
+  ): Promise<CarSpecification | null> {
+    try {
+      return await this.service.updateCarSpecification({
+        ...args,
+        data: {
+          ...args.data,
+
+          variant: args.data.variant
+            ? {
+                connect: args.data.variant,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => CarSpecification)
   async deleteCarSpecification(
     @graphql.Args() args: DeleteCarSpecificationArgs
   ): Promise<CarSpecification | null> {
@@ -64,5 +112,20 @@ export class CarSpecificationResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => Variant, {
+    nullable: true,
+    name: "variant",
+  })
+  async getVariant(
+    @graphql.Parent() parent: CarSpecification
+  ): Promise<Variant | null> {
+    const result = await this.service.getVariant(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

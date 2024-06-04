@@ -17,7 +17,11 @@ import { Brand } from "./Brand";
 import { BrandCountArgs } from "./BrandCountArgs";
 import { BrandFindManyArgs } from "./BrandFindManyArgs";
 import { BrandFindUniqueArgs } from "./BrandFindUniqueArgs";
+import { CreateBrandArgs } from "./CreateBrandArgs";
+import { UpdateBrandArgs } from "./UpdateBrandArgs";
 import { DeleteBrandArgs } from "./DeleteBrandArgs";
+import { ModelFindManyArgs } from "../../model/base/ModelFindManyArgs";
+import { Model } from "../../model/base/Model";
 import { BrandService } from "../brand.service";
 @graphql.Resolver(() => Brand)
 export class BrandResolverBase {
@@ -49,6 +53,33 @@ export class BrandResolverBase {
   }
 
   @graphql.Mutation(() => Brand)
+  async createBrand(@graphql.Args() args: CreateBrandArgs): Promise<Brand> {
+    return await this.service.createBrand({
+      ...args,
+      data: args.data,
+    });
+  }
+
+  @graphql.Mutation(() => Brand)
+  async updateBrand(
+    @graphql.Args() args: UpdateBrandArgs
+  ): Promise<Brand | null> {
+    try {
+      return await this.service.updateBrand({
+        ...args,
+        data: args.data,
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Brand)
   async deleteBrand(
     @graphql.Args() args: DeleteBrandArgs
   ): Promise<Brand | null> {
@@ -62,5 +93,19 @@ export class BrandResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => [Model], { name: "models" })
+  async findModels(
+    @graphql.Parent() parent: Brand,
+    @graphql.Args() args: ModelFindManyArgs
+  ): Promise<Model[]> {
+    const results = await this.service.findModels(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
   }
 }

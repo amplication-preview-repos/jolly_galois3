@@ -9,5 +9,73 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class ModelCreateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { BrandWhereUniqueInput } from "../../brand/base/BrandWhereUniqueInput";
+import { ValidateNested, IsOptional, IsString, IsInt } from "class-validator";
+import { Type } from "class-transformer";
+import { IsJSONValue } from "../../validators";
+import { GraphQLJSON } from "graphql-type-json";
+import { InputJsonValue } from "../../types";
+import { VariantCreateNestedManyWithoutModelsInput } from "./VariantCreateNestedManyWithoutModelsInput";
+
+@InputType()
+class ModelCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => BrandWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => BrandWhereUniqueInput)
+  @IsOptional()
+  @Field(() => BrandWhereUniqueInput, {
+    nullable: true,
+  })
+  brand?: BrandWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsJSONValue()
+  @IsOptional()
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+  })
+  image?: InputJsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => VariantCreateNestedManyWithoutModelsInput,
+  })
+  @ValidateNested()
+  @Type(() => VariantCreateNestedManyWithoutModelsInput)
+  @IsOptional()
+  @Field(() => VariantCreateNestedManyWithoutModelsInput, {
+    nullable: true,
+  })
+  variants?: VariantCreateNestedManyWithoutModelsInput;
+
+  @ApiProperty({
+    required: false,
+    type: Number,
+  })
+  @IsInt()
+  @IsOptional()
+  @Field(() => Number, {
+    nullable: true,
+  })
+  year?: number | null;
+}
+
 export { ModelCreateInput as ModelCreateInput };

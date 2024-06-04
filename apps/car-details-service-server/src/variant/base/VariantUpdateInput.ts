@@ -9,5 +9,91 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class VariantUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { CarReviewUpdateManyWithoutVariantsInput } from "./CarReviewUpdateManyWithoutVariantsInput";
+import {
+  ValidateNested,
+  IsOptional,
+  IsEnum,
+  IsString,
+  IsNumber,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { CarSpecificationUpdateManyWithoutVariantsInput } from "./CarSpecificationUpdateManyWithoutVariantsInput";
+import { EnumVariantFuelType } from "./EnumVariantFuelType";
+import { ModelWhereUniqueInput } from "../../model/base/ModelWhereUniqueInput";
+
+@InputType()
+class VariantUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => CarReviewUpdateManyWithoutVariantsInput,
+  })
+  @ValidateNested()
+  @Type(() => CarReviewUpdateManyWithoutVariantsInput)
+  @IsOptional()
+  @Field(() => CarReviewUpdateManyWithoutVariantsInput, {
+    nullable: true,
+  })
+  carReviews?: CarReviewUpdateManyWithoutVariantsInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => CarSpecificationUpdateManyWithoutVariantsInput,
+  })
+  @ValidateNested()
+  @Type(() => CarSpecificationUpdateManyWithoutVariantsInput)
+  @IsOptional()
+  @Field(() => CarSpecificationUpdateManyWithoutVariantsInput, {
+    nullable: true,
+  })
+  carSpecifications?: CarSpecificationUpdateManyWithoutVariantsInput;
+
+  @ApiProperty({
+    required: false,
+    enum: EnumVariantFuelType,
+  })
+  @IsEnum(EnumVariantFuelType)
+  @IsOptional()
+  @Field(() => EnumVariantFuelType, {
+    nullable: true,
+  })
+  fuelType?: "Option1" | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => ModelWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => ModelWhereUniqueInput)
+  @IsOptional()
+  @Field(() => ModelWhereUniqueInput, {
+    nullable: true,
+  })
+  model?: ModelWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Number, {
+    nullable: true,
+  })
+  price?: number | null;
+}
+
 export { VariantUpdateInput as VariantUpdateInput };

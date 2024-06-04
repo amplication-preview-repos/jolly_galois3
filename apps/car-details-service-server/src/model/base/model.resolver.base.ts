@@ -17,7 +17,12 @@ import { Model } from "./Model";
 import { ModelCountArgs } from "./ModelCountArgs";
 import { ModelFindManyArgs } from "./ModelFindManyArgs";
 import { ModelFindUniqueArgs } from "./ModelFindUniqueArgs";
+import { CreateModelArgs } from "./CreateModelArgs";
+import { UpdateModelArgs } from "./UpdateModelArgs";
 import { DeleteModelArgs } from "./DeleteModelArgs";
+import { VariantFindManyArgs } from "../../variant/base/VariantFindManyArgs";
+import { Variant } from "../../variant/base/Variant";
+import { Brand } from "../../brand/base/Brand";
 import { ModelService } from "../model.service";
 @graphql.Resolver(() => Model)
 export class ModelResolverBase {
@@ -49,6 +54,49 @@ export class ModelResolverBase {
   }
 
   @graphql.Mutation(() => Model)
+  async createModel(@graphql.Args() args: CreateModelArgs): Promise<Model> {
+    return await this.service.createModel({
+      ...args,
+      data: {
+        ...args.data,
+
+        brand: args.data.brand
+          ? {
+              connect: args.data.brand,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @graphql.Mutation(() => Model)
+  async updateModel(
+    @graphql.Args() args: UpdateModelArgs
+  ): Promise<Model | null> {
+    try {
+      return await this.service.updateModel({
+        ...args,
+        data: {
+          ...args.data,
+
+          brand: args.data.brand
+            ? {
+                connect: args.data.brand,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Model)
   async deleteModel(
     @graphql.Args() args: DeleteModelArgs
   ): Promise<Model | null> {
@@ -62,5 +110,32 @@ export class ModelResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => [Variant], { name: "variants" })
+  async findVariants(
+    @graphql.Parent() parent: Model,
+    @graphql.Args() args: VariantFindManyArgs
+  ): Promise<Variant[]> {
+    const results = await this.service.findVariants(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => Brand, {
+    nullable: true,
+    name: "brand",
+  })
+  async getBrand(@graphql.Parent() parent: Model): Promise<Brand | null> {
+    const result = await this.service.getBrand(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

@@ -11,11 +11,40 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString } from "class-validator";
+import { CarReview } from "../../carReview/base/CarReview";
+import {
+  ValidateNested,
+  IsOptional,
+  IsDate,
+  IsEnum,
+  IsString,
+  IsNumber,
+} from "class-validator";
 import { Type } from "class-transformer";
+import { CarSpecification } from "../../carSpecification/base/CarSpecification";
+import { EnumVariantFuelType } from "./EnumVariantFuelType";
+import { Model } from "../../model/base/Model";
 
 @ObjectType()
 class Variant {
+  @ApiProperty({
+    required: false,
+    type: () => [CarReview],
+  })
+  @ValidateNested()
+  @Type(() => CarReview)
+  @IsOptional()
+  carReviews?: Array<CarReview>;
+
+  @ApiProperty({
+    required: false,
+    type: () => [CarSpecification],
+  })
+  @ValidateNested()
+  @Type(() => CarSpecification)
+  @IsOptional()
+  carSpecifications?: Array<CarSpecification>;
+
   @ApiProperty({
     required: true,
   })
@@ -25,12 +54,54 @@ class Variant {
   createdAt!: Date;
 
   @ApiProperty({
+    required: false,
+    enum: EnumVariantFuelType,
+  })
+  @IsEnum(EnumVariantFuelType)
+  @IsOptional()
+  @Field(() => EnumVariantFuelType, {
+    nullable: true,
+  })
+  fuelType?: "Option1" | null;
+
+  @ApiProperty({
     required: true,
     type: String,
   })
   @IsString()
   @Field(() => String)
   id!: string;
+
+  @ApiProperty({
+    required: false,
+    type: () => Model,
+  })
+  @ValidateNested()
+  @Type(() => Model)
+  @IsOptional()
+  model?: Model | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name!: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Number, {
+    nullable: true,
+  })
+  price!: number | null;
 
   @ApiProperty({
     required: true,

@@ -11,8 +11,9 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString } from "class-validator";
+import { IsDate, IsString, IsOptional, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
+import { Variant } from "../../variant/base/Variant";
 
 @ObjectType()
 class CarSpecification {
@@ -23,6 +24,17 @@ class CarSpecification {
   @Type(() => Date)
   @Field(() => Date)
   createdAt!: Date;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  feature!: string | null;
 
   @ApiProperty({
     required: true,
@@ -39,6 +51,26 @@ class CarSpecification {
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  value!: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => Variant,
+  })
+  @ValidateNested()
+  @Type(() => Variant)
+  @IsOptional()
+  variant?: Variant | null;
 }
 
 export { CarSpecification as CarSpecification };

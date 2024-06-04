@@ -17,6 +17,8 @@ import { CarFeature } from "./CarFeature";
 import { CarFeatureCountArgs } from "./CarFeatureCountArgs";
 import { CarFeatureFindManyArgs } from "./CarFeatureFindManyArgs";
 import { CarFeatureFindUniqueArgs } from "./CarFeatureFindUniqueArgs";
+import { CreateCarFeatureArgs } from "./CreateCarFeatureArgs";
+import { UpdateCarFeatureArgs } from "./UpdateCarFeatureArgs";
 import { DeleteCarFeatureArgs } from "./DeleteCarFeatureArgs";
 import { CarFeatureService } from "../carFeature.service";
 @graphql.Resolver(() => CarFeature)
@@ -48,6 +50,35 @@ export class CarFeatureResolverBase {
       return null;
     }
     return result;
+  }
+
+  @graphql.Mutation(() => CarFeature)
+  async createCarFeature(
+    @graphql.Args() args: CreateCarFeatureArgs
+  ): Promise<CarFeature> {
+    return await this.service.createCarFeature({
+      ...args,
+      data: args.data,
+    });
+  }
+
+  @graphql.Mutation(() => CarFeature)
+  async updateCarFeature(
+    @graphql.Args() args: UpdateCarFeatureArgs
+  ): Promise<CarFeature | null> {
+    try {
+      return await this.service.updateCarFeature({
+        ...args,
+        data: args.data,
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
   }
 
   @graphql.Mutation(() => CarFeature)

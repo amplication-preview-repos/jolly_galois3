@@ -35,6 +35,7 @@ export class CarFeatureControllerBase {
       select: {
         createdAt: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -50,6 +51,7 @@ export class CarFeatureControllerBase {
       select: {
         createdAt: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -66,6 +68,7 @@ export class CarFeatureControllerBase {
       select: {
         createdAt: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -91,6 +94,7 @@ export class CarFeatureControllerBase {
         select: {
           createdAt: true,
           id: true,
+          name: true,
           updatedAt: true,
         },
       });
@@ -116,6 +120,7 @@ export class CarFeatureControllerBase {
         select: {
           createdAt: true,
           id: true,
+          name: true,
           updatedAt: true,
         },
       });

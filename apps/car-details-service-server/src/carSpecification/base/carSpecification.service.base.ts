@@ -10,9 +10,11 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
+
 import {
   Prisma,
   CarSpecification as PrismaCarSpecification,
+  Variant as PrismaVariant,
 } from "@prisma/client";
 
 export class CarSpecificationServiceBase {
@@ -50,5 +52,13 @@ export class CarSpecificationServiceBase {
     args: Prisma.SelectSubset<T, Prisma.CarSpecificationDeleteArgs>
   ): Promise<PrismaCarSpecification> {
     return this.prisma.carSpecification.delete(args);
+  }
+
+  async getVariant(parentId: string): Promise<PrismaVariant | null> {
+    return this.prisma.carSpecification
+      .findUnique({
+        where: { id: parentId },
+      })
+      .variant();
   }
 }

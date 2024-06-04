@@ -1,1 +1,3 @@
-export type CarFeatureUpdateInput = {};
+export type CarFeatureUpdateInput = {
+  name?: string | null;
+};

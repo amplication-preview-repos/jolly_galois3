@@ -17,7 +17,14 @@ import { Variant } from "./Variant";
 import { VariantCountArgs } from "./VariantCountArgs";
 import { VariantFindManyArgs } from "./VariantFindManyArgs";
 import { VariantFindUniqueArgs } from "./VariantFindUniqueArgs";
+import { CreateVariantArgs } from "./CreateVariantArgs";
+import { UpdateVariantArgs } from "./UpdateVariantArgs";
 import { DeleteVariantArgs } from "./DeleteVariantArgs";
+import { CarReviewFindManyArgs } from "../../carReview/base/CarReviewFindManyArgs";
+import { CarReview } from "../../carReview/base/CarReview";
+import { CarSpecificationFindManyArgs } from "../../carSpecification/base/CarSpecificationFindManyArgs";
+import { CarSpecification } from "../../carSpecification/base/CarSpecification";
+import { Model } from "../../model/base/Model";
 import { VariantService } from "../variant.service";
 @graphql.Resolver(() => Variant)
 export class VariantResolverBase {
@@ -51,6 +58,51 @@ export class VariantResolverBase {
   }
 
   @graphql.Mutation(() => Variant)
+  async createVariant(
+    @graphql.Args() args: CreateVariantArgs
+  ): Promise<Variant> {
+    return await this.service.createVariant({
+      ...args,
+      data: {
+        ...args.data,
+
+        model: args.data.model
+          ? {
+              connect: args.data.model,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @graphql.Mutation(() => Variant)
+  async updateVariant(
+    @graphql.Args() args: UpdateVariantArgs
+  ): Promise<Variant | null> {
+    try {
+      return await this.service.updateVariant({
+        ...args,
+        data: {
+          ...args.data,
+
+          model: args.data.model
+            ? {
+                connect: args.data.model,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Variant)
   async deleteVariant(
     @graphql.Args() args: DeleteVariantArgs
   ): Promise<Variant | null> {
@@ -64,5 +116,46 @@ export class VariantResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => [CarReview], { name: "carReviews" })
+  async findCarReviews(
+    @graphql.Parent() parent: Variant,
+    @graphql.Args() args: CarReviewFindManyArgs
+  ): Promise<CarReview[]> {
+    const results = await this.service.findCarReviews(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => [CarSpecification], { name: "carSpecifications" })
+  async findCarSpecifications(
+    @graphql.Parent() parent: Variant,
+    @graphql.Args() args: CarSpecificationFindManyArgs
+  ): Promise<CarSpecification[]> {
+    const results = await this.service.findCarSpecifications(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => Model, {
+    nullable: true,
+    name: "model",
+  })
+  async getModel(@graphql.Parent() parent: Variant): Promise<Model | null> {
+    const result = await this.service.getModel(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

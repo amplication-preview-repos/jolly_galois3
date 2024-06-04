@@ -22,6 +22,9 @@ import { Brand } from "./Brand";
 import { BrandFindManyArgs } from "./BrandFindManyArgs";
 import { BrandWhereUniqueInput } from "./BrandWhereUniqueInput";
 import { BrandUpdateInput } from "./BrandUpdateInput";
+import { ModelFindManyArgs } from "../../model/base/ModelFindManyArgs";
+import { Model } from "../../model/base/Model";
+import { ModelWhereUniqueInput } from "../../model/base/ModelWhereUniqueInput";
 
 export class BrandControllerBase {
   constructor(protected readonly service: BrandService) {}
@@ -31,8 +34,11 @@ export class BrandControllerBase {
     return await this.service.createBrand({
       data: data,
       select: {
+        country: true,
         createdAt: true,
         id: true,
+        logo: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -46,8 +52,11 @@ export class BrandControllerBase {
     return this.service.brands({
       ...args,
       select: {
+        country: true,
         createdAt: true,
         id: true,
+        logo: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -62,8 +71,11 @@ export class BrandControllerBase {
     const result = await this.service.brand({
       where: params,
       select: {
+        country: true,
         createdAt: true,
         id: true,
+        logo: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -87,8 +99,11 @@ export class BrandControllerBase {
         where: params,
         data: data,
         select: {
+          country: true,
           createdAt: true,
           id: true,
+          logo: true,
+          name: true,
           updatedAt: true,
         },
       });
@@ -112,8 +127,11 @@ export class BrandControllerBase {
       return await this.service.deleteBrand({
         where: params,
         select: {
+          country: true,
           createdAt: true,
           id: true,
+          logo: true,
+          name: true,
           updatedAt: true,
         },
       });
@@ -125,5 +143,88 @@ export class BrandControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/models")
+  @ApiNestedQuery(ModelFindManyArgs)
+  async findModels(
+    @common.Req() request: Request,
+    @common.Param() params: BrandWhereUniqueInput
+  ): Promise<Model[]> {
+    const query = plainToClass(ModelFindManyArgs, request.query);
+    const results = await this.service.findModels(params.id, {
+      ...query,
+      select: {
+        brand: {
+          select: {
+            id: true,
+          },
+        },
+
+        createdAt: true,
+        id: true,
+        image: true,
+        name: true,
+        updatedAt: true,
+        year: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/models")
+  async connectModels(
+    @common.Param() params: BrandWhereUniqueInput,
+    @common.Body() body: ModelWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      models: {
+        connect: body,
+      },
+    };
+    await this.service.updateBrand({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/models")
+  async updateModels(
+    @common.Param() params: BrandWhereUniqueInput,
+    @common.Body() body: ModelWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      models: {
+        set: body,
+      },
+    };
+    await this.service.updateBrand({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/models")
+  async disconnectModels(
+    @common.Param() params: BrandWhereUniqueInput,
+    @common.Body() body: ModelWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      models: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateBrand({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

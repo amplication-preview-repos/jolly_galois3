@@ -9,5 +9,47 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class CarSpecificationUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsString, IsOptional, ValidateNested } from "class-validator";
+import { VariantWhereUniqueInput } from "../../variant/base/VariantWhereUniqueInput";
+import { Type } from "class-transformer";
+
+@InputType()
+class CarSpecificationUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  feature?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  value?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => VariantWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => VariantWhereUniqueInput)
+  @IsOptional()
+  @Field(() => VariantWhereUniqueInput, {
+    nullable: true,
+  })
+  variant?: VariantWhereUniqueInput | null;
+}
+
 export { CarSpecificationUpdateInput as CarSpecificationUpdateInput };

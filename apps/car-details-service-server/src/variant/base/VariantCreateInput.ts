@@ -9,5 +9,91 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class VariantCreateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { CarReviewCreateNestedManyWithoutVariantsInput } from "./CarReviewCreateNestedManyWithoutVariantsInput";
+import {
+  ValidateNested,
+  IsOptional,
+  IsEnum,
+  IsString,
+  IsNumber,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { CarSpecificationCreateNestedManyWithoutVariantsInput } from "./CarSpecificationCreateNestedManyWithoutVariantsInput";
+import { EnumVariantFuelType } from "./EnumVariantFuelType";
+import { ModelWhereUniqueInput } from "../../model/base/ModelWhereUniqueInput";
+
+@InputType()
+class VariantCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => CarReviewCreateNestedManyWithoutVariantsInput,
+  })
+  @ValidateNested()
+  @Type(() => CarReviewCreateNestedManyWithoutVariantsInput)
+  @IsOptional()
+  @Field(() => CarReviewCreateNestedManyWithoutVariantsInput, {
+    nullable: true,
+  })
+  carReviews?: CarReviewCreateNestedManyWithoutVariantsInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => CarSpecificationCreateNestedManyWithoutVariantsInput,
+  })
+  @ValidateNested()
+  @Type(() => CarSpecificationCreateNestedManyWithoutVariantsInput)
+  @IsOptional()
+  @Field(() => CarSpecificationCreateNestedManyWithoutVariantsInput, {
+    nullable: true,
+  })
+  carSpecifications?: CarSpecificationCreateNestedManyWithoutVariantsInput;
+
+  @ApiProperty({
+    required: false,
+    enum: EnumVariantFuelType,
+  })
+  @IsEnum(EnumVariantFuelType)
+  @IsOptional()
+  @Field(() => EnumVariantFuelType, {
+    nullable: true,
+  })
+  fuelType?: "Option1" | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => ModelWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => ModelWhereUniqueInput)
+  @IsOptional()
+  @Field(() => ModelWhereUniqueInput, {
+    nullable: true,
+  })
+  model?: ModelWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Field(() => Number, {
+    nullable: true,
+  })
+  price?: number | null;
+}
+
 export { VariantCreateInput as VariantCreateInput };

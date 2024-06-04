@@ -31,11 +31,28 @@ export class CarReviewControllerBase {
     @common.Body() data: CarReviewCreateInput
   ): Promise<CarReview> {
     return await this.service.createCarReview({
-      data: data,
+      data: {
+        ...data,
+
+        variant: data.variant
+          ? {
+              connect: data.variant,
+            }
+          : undefined,
+      },
       select: {
+        comment: true,
         createdAt: true,
         id: true,
+        rating: true,
         updatedAt: true,
+        user: true,
+
+        variant: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -48,9 +65,18 @@ export class CarReviewControllerBase {
     return this.service.carReviews({
       ...args,
       select: {
+        comment: true,
         createdAt: true,
         id: true,
+        rating: true,
         updatedAt: true,
+        user: true,
+
+        variant: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -64,9 +90,18 @@ export class CarReviewControllerBase {
     const result = await this.service.carReview({
       where: params,
       select: {
+        comment: true,
         createdAt: true,
         id: true,
+        rating: true,
         updatedAt: true,
+        user: true,
+
+        variant: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -87,11 +122,28 @@ export class CarReviewControllerBase {
     try {
       return await this.service.updateCarReview({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          variant: data.variant
+            ? {
+                connect: data.variant,
+              }
+            : undefined,
+        },
         select: {
+          comment: true,
           createdAt: true,
           id: true,
+          rating: true,
           updatedAt: true,
+          user: true,
+
+          variant: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -114,9 +166,18 @@ export class CarReviewControllerBase {
       return await this.service.deleteCarReview({
         where: params,
         select: {
+          comment: true,
           createdAt: true,
           id: true,
+          rating: true,
           updatedAt: true,
+          user: true,
+
+          variant: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {

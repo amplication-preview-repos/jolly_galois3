@@ -22,6 +22,12 @@ import { Variant } from "./Variant";
 import { VariantFindManyArgs } from "./VariantFindManyArgs";
 import { VariantWhereUniqueInput } from "./VariantWhereUniqueInput";
 import { VariantUpdateInput } from "./VariantUpdateInput";
+import { CarReviewFindManyArgs } from "../../carReview/base/CarReviewFindManyArgs";
+import { CarReview } from "../../carReview/base/CarReview";
+import { CarReviewWhereUniqueInput } from "../../carReview/base/CarReviewWhereUniqueInput";
+import { CarSpecificationFindManyArgs } from "../../carSpecification/base/CarSpecificationFindManyArgs";
+import { CarSpecification } from "../../carSpecification/base/CarSpecification";
+import { CarSpecificationWhereUniqueInput } from "../../carSpecification/base/CarSpecificationWhereUniqueInput";
 
 export class VariantControllerBase {
   constructor(protected readonly service: VariantService) {}
@@ -31,10 +37,28 @@ export class VariantControllerBase {
     @common.Body() data: VariantCreateInput
   ): Promise<Variant> {
     return await this.service.createVariant({
-      data: data,
+      data: {
+        ...data,
+
+        model: data.model
+          ? {
+              connect: data.model,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
+        fuelType: true,
         id: true,
+
+        model: {
+          select: {
+            id: true,
+          },
+        },
+
+        name: true,
+        price: true,
         updatedAt: true,
       },
     });
@@ -49,7 +73,17 @@ export class VariantControllerBase {
       ...args,
       select: {
         createdAt: true,
+        fuelType: true,
         id: true,
+
+        model: {
+          select: {
+            id: true,
+          },
+        },
+
+        name: true,
+        price: true,
         updatedAt: true,
       },
     });
@@ -65,7 +99,17 @@ export class VariantControllerBase {
       where: params,
       select: {
         createdAt: true,
+        fuelType: true,
         id: true,
+
+        model: {
+          select: {
+            id: true,
+          },
+        },
+
+        name: true,
+        price: true,
         updatedAt: true,
       },
     });
@@ -87,10 +131,28 @@ export class VariantControllerBase {
     try {
       return await this.service.updateVariant({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          model: data.model
+            ? {
+                connect: data.model,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
+          fuelType: true,
           id: true,
+
+          model: {
+            select: {
+              id: true,
+            },
+          },
+
+          name: true,
+          price: true,
           updatedAt: true,
         },
       });
@@ -115,7 +177,17 @@ export class VariantControllerBase {
         where: params,
         select: {
           createdAt: true,
+          fuelType: true,
           id: true,
+
+          model: {
+            select: {
+              id: true,
+            },
+          },
+
+          name: true,
+          price: true,
           updatedAt: true,
         },
       });
@@ -127,5 +199,170 @@ export class VariantControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/carReviews")
+  @ApiNestedQuery(CarReviewFindManyArgs)
+  async findCarReviews(
+    @common.Req() request: Request,
+    @common.Param() params: VariantWhereUniqueInput
+  ): Promise<CarReview[]> {
+    const query = plainToClass(CarReviewFindManyArgs, request.query);
+    const results = await this.service.findCarReviews(params.id, {
+      ...query,
+      select: {
+        comment: true,
+        createdAt: true,
+        id: true,
+        rating: true,
+        updatedAt: true,
+        user: true,
+
+        variant: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/carReviews")
+  async connectCarReviews(
+    @common.Param() params: VariantWhereUniqueInput,
+    @common.Body() body: CarReviewWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      carReviews: {
+        connect: body,
+      },
+    };
+    await this.service.updateVariant({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/carReviews")
+  async updateCarReviews(
+    @common.Param() params: VariantWhereUniqueInput,
+    @common.Body() body: CarReviewWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      carReviews: {
+        set: body,
+      },
+    };
+    await this.service.updateVariant({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/carReviews")
+  async disconnectCarReviews(
+    @common.Param() params: VariantWhereUniqueInput,
+    @common.Body() body: CarReviewWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      carReviews: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateVariant({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/carSpecifications")
+  @ApiNestedQuery(CarSpecificationFindManyArgs)
+  async findCarSpecifications(
+    @common.Req() request: Request,
+    @common.Param() params: VariantWhereUniqueInput
+  ): Promise<CarSpecification[]> {
+    const query = plainToClass(CarSpecificationFindManyArgs, request.query);
+    const results = await this.service.findCarSpecifications(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        feature: true,
+        id: true,
+        updatedAt: true,
+        value: true,
+
+        variant: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/carSpecifications")
+  async connectCarSpecifications(
+    @common.Param() params: VariantWhereUniqueInput,
+    @common.Body() body: CarSpecificationWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      carSpecifications: {
+        connect: body,
+      },
+    };
+    await this.service.updateVariant({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/carSpecifications")
+  async updateCarSpecifications(
+    @common.Param() params: VariantWhereUniqueInput,
+    @common.Body() body: CarSpecificationWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      carSpecifications: {
+        set: body,
+      },
+    };
+    await this.service.updateVariant({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/carSpecifications")
+  async disconnectCarSpecifications(
+    @common.Param() params: VariantWhereUniqueInput,
+    @common.Body() body: CarSpecificationWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      carSpecifications: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateVariant({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

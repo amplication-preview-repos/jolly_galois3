@@ -10,7 +10,11 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, CarReview as PrismaCarReview } from "@prisma/client";
+import {
+  Prisma,
+  CarReview as PrismaCarReview,
+  Variant as PrismaVariant,
+} from "@prisma/client";
 
 export class CarReviewServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -45,5 +49,13 @@ export class CarReviewServiceBase {
     args: Prisma.SelectSubset<T, Prisma.CarReviewDeleteArgs>
   ): Promise<PrismaCarReview> {
     return this.prisma.carReview.delete(args);
+  }
+
+  async getVariant(parentId: string): Promise<PrismaVariant | null> {
+    return this.prisma.carReview
+      .findUnique({
+        where: { id: parentId },
+      })
+      .variant();
   }
 }

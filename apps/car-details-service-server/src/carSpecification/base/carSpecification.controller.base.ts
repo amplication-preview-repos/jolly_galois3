@@ -31,11 +31,27 @@ export class CarSpecificationControllerBase {
     @common.Body() data: CarSpecificationCreateInput
   ): Promise<CarSpecification> {
     return await this.service.createCarSpecification({
-      data: data,
+      data: {
+        ...data,
+
+        variant: data.variant
+          ? {
+              connect: data.variant,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
+        feature: true,
         id: true,
         updatedAt: true,
+        value: true,
+
+        variant: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -51,8 +67,16 @@ export class CarSpecificationControllerBase {
       ...args,
       select: {
         createdAt: true,
+        feature: true,
         id: true,
         updatedAt: true,
+        value: true,
+
+        variant: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -67,8 +91,16 @@ export class CarSpecificationControllerBase {
       where: params,
       select: {
         createdAt: true,
+        feature: true,
         id: true,
         updatedAt: true,
+        value: true,
+
+        variant: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -89,11 +121,27 @@ export class CarSpecificationControllerBase {
     try {
       return await this.service.updateCarSpecification({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          variant: data.variant
+            ? {
+                connect: data.variant,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
+          feature: true,
           id: true,
           updatedAt: true,
+          value: true,
+
+          variant: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -117,8 +165,16 @@ export class CarSpecificationControllerBase {
         where: params,
         select: {
           createdAt: true,
+          feature: true,
           id: true,
           updatedAt: true,
+          value: true,
+
+          variant: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
