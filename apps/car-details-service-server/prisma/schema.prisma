@@ -1,0 +1,75 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Brand {
+  country   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  logo      Json?
+  models    Model[]
+  name      String?
+  updatedAt DateTime @updatedAt
+}
+
+model Model {
+  brand     Brand?    @relation(fields: [brandId], references: [id])
+  brandId   String?
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  image     Json?
+  name      String?
+  updatedAt DateTime  @updatedAt
+  variants  Variant[]
+  year      Int?
+}
+
+model Variant {
+  carReviews        CarReview[]
+  carSpecifications CarSpecification[]
+  createdAt         DateTime             @default(now())
+  fuelType          EnumVariantFuelType?
+  id                String               @id @default(cuid())
+  model             Model?               @relation(fields: [modelId], references: [id])
+  modelId           String?
+  name              String?
+  price             Float?
+  updatedAt         DateTime             @updatedAt
+}
+
+model CarSpecification {
+  createdAt DateTime @default(now())
+  feature   String?
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+  value     String?
+  variant   Variant? @relation(fields: [variantId], references: [id])
+  variantId String?
+}
+
+model CarFeature {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  updatedAt DateTime @updatedAt
+}
+
+model CarReview {
+  comment   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  rating    Int?
+  updatedAt DateTime @updatedAt
+  user      String?
+  variant   Variant? @relation(fields: [variantId], references: [id])
+  variantId String?
+}
+
+enum EnumVariantFuelType {
+  Option1
+}
